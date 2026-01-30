@@ -1,0 +1,191 @@
+/* ===== Base ===== */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #0a1f44, #1f3b72, #0c2a5e);
+  color: #ffffff;
+}
+
+
+/* ===== Container ===== */
+.landing-container {
+   width: 100%;  
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  padding-bottom: 60px;
+  overflow-x: hidden;
+}
+
+/* ===== Hero Section ===== */
+.hero-section {
+  padding: 100px 20px 60px;
+  max-width: 900px;
+  margin: auto;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+.landing-title {
+  font-size: 3.2rem;
+  font-weight: 700;
+  color: #00ffff;
+  text-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+  letter-spacing: 1px;
+}
+
+.landing-subtitle {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #cbe4ff;
+}
+
+.get-started-btn {
+  margin-top: 30px;
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #ff00ff, #00ffff);
+  border: none;
+  color: white;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.get-started-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+/* ===== Cards (Lost/Found & Match/Profile) ===== */
+.section-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 60px 20px;
+}
+
+.info-card {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 35px 25px;
+  width: 280px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.info-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 25px rgba(0, 255, 255, 0.4);
+}
+
+.info-card h3 {
+  color: #ff00ff;
+  margin-bottom: 10px;
+}
+
+.info-card p {
+  color: #d0e2ff;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+.info-card button {
+  background: linear-gradient(135deg, #ff00ff, #00ffff);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.3s ease;
+}
+.info-card button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.6);
+}
+
+/* ===== Key Aspects Section ===== */
+.key-aspects {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 50px;
+  padding: 80px 20px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+  margin: 50px 30px;
+  transition: 0.4s ease;
+}
+
+.key-aspects:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.key-text {
+  max-width: 500px;
+  text-align: left;
+}
+
+.key-text h2 {
+  color: #00ffff;
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+
+.key-text ul {
+  list-style: none;
+  padding: 0;
+}
+
+.key-text li {
+  margin: 8px 0;
+  color: #d2e5ff;
+  position: relative;
+  padding-left: 25px;
+}
+
+.key-text li::before {
+  content: "★";
+  color: #ff00ff;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.key-image img {
+  width: 200px;
+  height: 200px;
+  filter: drop-shadow(0 0 15px #00ffffaa);
+}
+
+/* ===== Footer ===== */
+.landing-footer {
+  width: 100%;
+  background: #08132c;
+  color: #fff;
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 80px;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.landing-footer p {
+  margin: 0;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
