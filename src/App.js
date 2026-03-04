@@ -4,7 +4,7 @@ import LandingPage from "./components/LandingPage";
 import Home from "./pages/Home";
 import LostItems from "./pages/LostItems";
 import FoundItems from "./pages/FoundItems";
-import Matches from "./pages/Match  es";
+import Matches from "./pages/Matches";
 import Profile from "./pages/Profile";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
