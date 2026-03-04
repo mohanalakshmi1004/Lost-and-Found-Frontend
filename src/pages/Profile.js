@@ -1,134 +1,189 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Profile() {
   const [lostItems, setLostItems] = useState([]);
-  const [foundItems, setFoundItems] = useState([]);
+  const [myFoundItems, setMyFoundItems] = useState([]); // items the logged-in user has reported
+  const [allFoundItems, setAllFoundItems] = useState([]); // all found items for matching
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Fetch latest lost and found items
   const fetchData = async () => {
     setLoading(true);
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.warn("No token found in localStorage, redirecting to login");
+      setLoading(false);
+      navigate("/login");
+      return;
+    }
+
+    const config = { headers: { Authorization: `Bearer ${token}` } };
+
     try {
-      const [lostRes, foundRes] = await Promise.all([
-        axios.get("http://localhost:5000/api/lost"),
-        axios.get("http://localhost:5000/api/found"),
+      // fetch user's lost items, user's own found items (for display), and
+      // all found items so we can match across users
+      const [lostRes, myFoundRes, allFoundRes] = await Promise.all([
+        axios.get("http://localhost:5000/api/lost", config),
+        axios.get("http://localhost:5000/api/found", config),
+        axios.get("http://localhost:5000/api/found/all", config),
       ]);
 
-      setLostItems(lostRes.data.map(item => ({ ...item, _id: item._id.toString() })));
-      setFoundItems(foundRes.data.map(item => ({ ...item, _id: item._id.toString() })));
+      setLostItems(lostRes.data);
+      setMyFoundItems(myFoundRes.data);
+      setAllFoundItems(allFoundRes.data);
     } catch (err) {
-      console.error("Failed to fetch profile data:", err.response?.data || err.message);
-      alert("Failed to load profile data");
+      // if token was invalid/expired, the server will send 401
+      if (err.response && err.response.status === 401) {
+        console.error("Auth error while fetching profile, redirecting to login");
+        navigate("/login");
+      } else {
+        console.error("Failed to fetch profile data:", err);
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // DELETE Lost Item
+  // FIXED: Added headers to delete request
   const deleteLostItem = async (id) => {
     if (!window.confirm("Are you sure you want to delete this lost item?")) return;
+    const token = localStorage.getItem("token");
 
     try {
       setDeletingId(id);
-      await axios.delete(`http://localhost:5000/api/lost/${id}`);
-      await fetchData(); // Refetch latest items
+      await axios.delete(`http://localhost:5000/api/lost/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      await fetchData(); 
     } catch (err) {
-      console.error("Failed to delete lost item:", err.response?.data || err.message);
-      alert("Failed to delete lost item: " + (err.response?.data?.message || err.message));
+      alert("Error deleting: " + (err.response?.status === 401 ? "Unauthorized. Log in again." : err.message));
     } finally {
       setDeletingId(null);
     }
   };
 
-  // DELETE Found Item
+  // FIXED: Added headers to delete request
   const deleteFoundItem = async (id) => {
     if (!window.confirm("Are you sure you want to delete this found item?")) return;
+    const token = localStorage.getItem("token");
 
     try {
       setDeletingId(id);
-      await axios.delete(`http://localhost:5000/api/found/${id}`);
-      await fetchData(); // Refetch latest items
+      await axios.delete(`http://localhost:5000/api/found/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      await fetchData();
     } catch (err) {
-      console.error("Failed to delete found item:", err.response?.data || err.message);
-      alert("Failed to delete found item: " + (err.response?.data?.message || err.message));
+      alert("Error deleting: " + (err.response?.status === 401 ? "Unauthorized. Log in again." : err.message));
     } finally {
       setDeletingId(null);
     }
   };
 
-  // Match lost items with found items
-  const lostWithMatch = lostItems.map(lost => {
-    const match = foundItems.find(f =>
-      f.item.toLowerCase().includes(lost.item.toLowerCase()) &&
-      f.place.toLowerCase().includes(lost.place.toLowerCase())
+  // compare lost items only with global found list
+  const lostWithMatch = lostItems.map((lost) => {
+    const match = allFoundItems.find(
+      (f) =>
+        f.item.toLowerCase().includes(lost.item.toLowerCase()) &&
+        f.place.toLowerCase().includes(lost.place.toLowerCase())
     );
     return match
       ? { ...lost, matched: true, finderName: match.contactName, finderContact: match.contactPhone }
       : lost;
   });
 
-  if (loading) return <p>Loading profile data...</p>;
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        <div className="loader-container">
+          <p>Loading Profile</p>
+          <div className="progress-bar">
+            <div className="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container profile-section">
       <h2 className="page-title">My Profile</h2>
 
       {/* LOST ITEMS */}
-      <h3 style={{ color: "skyblue" }}>Lost Items</h3>
-      {lostWithMatch.length === 0 && <p className="empty-msg">No lost items reported yet.</p>}
-      {lostWithMatch.map(item => (
-        <div key={item._id} className="profile-card">
-          <h3>{item.item}</h3>
-          <div className="profile-info">Place: {item.place}</div>
-          {item.lostDate && <div className="profile-info">Lost Date: {new Date(item.lostDate).toDateString()}</div>}
-          {item.desc && <div className="profile-info">Description: {item.desc}</div>}
-          <div className="profile-info">Name: {item.contactName}</div>
-          <div className="profile-info">Contact: {item.contactPhone}</div>
-          <div className="profile-info">Address: {item.userAddress}</div>
-          {item.image && <img src={item.image} alt={item.item} style={{ maxWidth: "100%", marginTop: 10 }} />}
-          {item.matched && (
-            <p style={{ color: "#00ffcc", fontWeight: "bold" }}>
-              ✅ Found! Contact finder: {item.finderName} ({item.finderContact})
-            </p>
-          )}
-          <button
-            className="status delete-btn"
-            onClick={() => deleteLostItem(item._id)}
-            disabled={deletingId === item._id}
-          >
-            {deletingId === item._id ? "Deleting..." : "Delete"}
-          </button>
-        </div>
-      ))}
+      <div className="section-header-group">
+        <h3 className="section-subtitle">Lost Items</h3>
+        <p className="item-count">{lostWithMatch.length} items reported</p>
+      </div>
+      
+      {/* Logic check: Only show grid if there are items */}
+      <div className="items-grid">
+        {lostWithMatch.length === 0 ? (
+          <p className="empty-msg">No lost items reported yet.</p>
+        ) : (
+          lostWithMatch.map((item) => (
+            <div key={item._id} className="profile-card">
+              <div className="card-content">
+                <h3>{item.item}</h3>
+                <div className="profile-info"><strong>Place:</strong> {item.place}</div>
+                {item.lostDate && <div className="profile-info"><strong>Date:</strong> {new Date(item.lostDate).toDateString()}</div>}
+                <div className="profile-info"><strong>Contact:</strong> {item.contactPhone}</div>
+                {item.image && <img src={item.image} alt={item.item} className="card-img" />}
+                
+                {item.matched && (
+                  <div className="match-alert">
+                    ✅ Found! Contact finder: {item.finderName} ({item.finderContact})
+                  </div>
+                )}
+              </div>
+              <button
+                className="delete-btn"
+                onClick={() => deleteLostItem(item._id)}
+                disabled={deletingId === item._id}
+              >
+                {deletingId === item._id ? "Deleting..." : "Delete Item"}
+              </button>
+            </div>
+          ))
+        )}
+      </div>
 
       {/* FOUND ITEMS */}
-      <h3 style={{ color: "skyblue", marginTop: 30 }}>Found Items</h3>
-      {foundItems.length === 0 && <p className="empty-msg">No found items reported yet.</p>}
-      {foundItems.map(item => (
-        <div key={item._id} className="profile-card">
-          <h3>{item.item}</h3>
-          <div className="profile-info">Place: {item.place}</div>
-          {item.foundDate && <div className="profile-info">Found Date: {new Date(item.foundDate).toDateString()}</div>}
-          {item.desc && <div className="profile-info">Description: {item.desc}</div>}
-          <div className="profile-info">Name: {item.contactName}</div>
-          <div className="profile-info">Contact: {item.contactPhone}</div>
-          <div className="profile-info">Address: {item.userAddress}</div>
-          {item.image && <img src={item.image} alt={item.item} style={{ maxWidth: "100%", marginTop: 10 }} />}
-          <button
-            className="status delete-btn"
-            onClick={() => deleteFoundItem(item._id)}
-            disabled={deletingId === item._id}
-          >
-            {deletingId === item._id ? "Deleting..." : "Delete"}
-          </button>
-        </div>
-      ))}
+      <div className="section-header-group">
+        <h3 className="section-subtitle">Found Items</h3>
+        <p className="item-count">{myFoundItems.length} items reported</p>
+      </div>
+
+      <div className="items-grid">
+        {myFoundItems.length === 0 ? (
+          <p className="empty-msg">No found items reported yet.</p>
+        ) : (
+          myFoundItems.map((item) => (
+            <div key={item._id} className="profile-card">
+              <div className="card-content">
+                <h3>{item.item}</h3>
+                <div className="profile-info"><strong>Place:</strong> {item.place}</div>
+                {item.foundDate && <div className="profile-info"><strong>Date:</strong> {new Date(item.foundDate).toDateString()}</div>}
+                <div className="profile-info"><strong>Contact:</strong> {item.contactPhone}</div>
+                {item.image && <img src={item.image} alt={item.item} className="card-img" />}
+              </div>
+              <button
+                className="delete-btn"
+                onClick={() => deleteFoundItem(item._id)}
+                disabled={deletingId === item._id}
+              >
+                {deletingId === item._id ? "Deleting..." : "Delete Item"}
+              </button>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }

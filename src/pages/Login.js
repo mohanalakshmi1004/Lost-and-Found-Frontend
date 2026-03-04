@@ -14,29 +14,34 @@ function Login() {
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // get saved user from localStorage
-    const savedUser = JSON.parse(localStorage.getItem("user"));
+  try {
+    const response = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
 
-    if (!savedUser) {
-      setError("No account found. Please sign up first.");
+    const result = await response.json();
+    console.log("Login response:", result);
+
+    if (!response.ok) {
+      setError(result.message);
       return;
     }
 
-    if (
-      savedUser.email === data.email &&
-      savedUser.password === data.password
-    ) {
-      console.log("Login successful");
-      setError("");
-      localStorage.setItem("isLoggedIn", "true"); // mark login
-      navigate("/");
-    } else {
-      setError("Invalid email or password");
-    }
-  };
+    // Store token & user
+    localStorage.setItem("token", result.token);
+    localStorage.setItem("user", JSON.stringify(result.user));
+
+    setError("");
+    navigate("/");
+  } catch (error) {
+    setError("Something went wrong");
+  }
+};
 
   return (
     <div className="auth-container">

@@ -14,16 +14,32 @@ function Signup() {
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Save signup info to localStorage
-    localStorage.setItem("user", JSON.stringify(data));
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        }),
+      });
 
-    alert("Signup successful! Please login now.");
-    navigate("/login");
+      const result = await response.json();
+      if (!response.ok) {
+        alert(result.message || "Signup failed. Please try again.");
+        return;
+      }
+
+      alert("Signup successful! Please login now.");
+      navigate("/login");
+    } catch (error) {
+      alert("Signup failed. Please try again.");
+    }
   };
-
   return (
     <div className="auth-container">
       <div className="auth-card">

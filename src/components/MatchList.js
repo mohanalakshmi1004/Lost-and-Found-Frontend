@@ -6,34 +6,31 @@ function MatchList({ lostItems = [], foundItems = [] }) {
 
   lostItems.forEach((lost) => {
     foundItems.forEach((found) => {
+      // Improved logic: Match if Item name is similar AND Place is similar
       const nameMatch =
-        normalize(lost.item) === normalize(found.item) ||
         normalize(lost.item).includes(normalize(found.item)) ||
         normalize(found.item).includes(normalize(lost.item));
 
       const placeMatch =
-        normalize(lost.place) === normalize(found.place) ||
         normalize(lost.place).includes(normalize(found.place)) ||
         normalize(found.place).includes(normalize(lost.place));
 
-      if (nameMatch || placeMatch) {
+      if (nameMatch && placeMatch) {
         matches.push({
           item: lost.item,
-          place: lost.place,
+          lostPlace: lost.place,
           lostDate: lost.lostDate,
-          desc: lost.desc,
-          image: lost.image,
-          contactName: lost.contactName,
-          contactPhone: lost.contactPhone,
-          userAddress: lost.userAddress,
+          lostDesc: lost.desc,
+          lostImage: lost.image,
+          ownerName: lost.contactName,
+          ownerPhone: lost.contactPhone,
 
           foundPlace: found.place,
           foundDate: found.foundDate,
           foundDesc: found.desc,
           foundImage: found.image,
           finderName: found.contactName,
-          finderContact: found.contactPhone,
-          finderAddress: found.userAddress,
+          finderPhone: found.contactPhone,
         });
       }
     });
@@ -42,34 +39,34 @@ function MatchList({ lostItems = [], foundItems = [] }) {
   return (
     <div className="match-section">
       {matches.length === 0 ? (
-        <p className="empty-msg">No matches found.</p>
+        <p className="empty-msg">No matches found at the moment.</p>
       ) : (
-        <div className="matches-container">
+        <div className="items-grid">
           {matches.map((m, idx) => (
-            <div key={idx} className="match-card">
+            <div key={idx} className="profile-card match-card">
+              <div className="match-badge">Match Found</div>
               <h3>{m.item}</h3>
-
-              <div className="match-date">
-                Lost at: {m.place} ({m.lostDate ? new Date(m.lostDate).toDateString() : "N/A"})
+              
+              <div className="match-details-split">
+                <div className="match-col">
+                  <p className="col-label">Lost Info</p>
+                  <div className="profile-info">📍 {m.lostPlace}</div>
+                  <div className="profile-info">👤 {m.ownerName}</div>
+                  <div className="profile-info">📞 {m.ownerPhone}</div>
+                </div>
+                <div className="match-col">
+                  <p className="col-label">Found Info</p>
+                  <div className="profile-info">📍 {m.foundPlace}</div>
+                  <div className="profile-info">👤 {m.finderName}</div>
+                  <div className="profile-info">📞 {m.finderPhone}</div>
+                </div>
               </div>
 
-              <div className="match-date">
-                Found at: {m.foundPlace} ({m.foundDate ? new Date(m.foundDate).toDateString() : "N/A"})
+              {m.lostImage && <img src={m.lostImage} alt="Lost" className="card-img" />}
+              
+              <div className="match-desc" style={{marginTop: '15px', fontSize: '0.8rem', opacity: 0.8}}>
+                <strong>Owner Note:</strong> {m.lostDesc || "No description"}
               </div>
-
-              <div className="match-desc">
-                Lost by: {m.contactName} | Phone: {m.contactPhone} | Address: {m.userAddress}
-              </div>
-
-              <div className="match-desc">
-                Found by: {m.finderName} | Phone: {m.finderContact} | Address: {m.finderAddress}
-              </div>
-
-              {m.desc && <div className="match-desc">Lost Description: {m.desc}</div>}
-              {m.foundDesc && <div className="match-desc">Found Description: {m.foundDesc}</div>}
-
-              {m.image && <img src={m.image} alt="Lost" style={{ maxWidth: "100%", marginTop: 10 }} />}
-              {m.foundImage && <img src={m.foundImage} alt="Found" style={{ maxWidth: "100%", marginTop: 10 }} />}
             </div>
           ))}
         </div>

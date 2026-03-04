@@ -193,8 +193,9 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 18px;
   padding: 25px 25px;
-  width: 50%;              /* ✅ Reduced from 80% */
-  max-width: 500px;        /* ✅ Reduced from 800px */
+  /* allow card to fill grid column; grid controls overall layout */
+  width: 100%;
+  max-width: 600px;        /* prevent cards from becoming excessively wide */
   margin: 18px 0;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(12px);
@@ -303,16 +304,190 @@
   margin-top: 10px;
 }
 
-/* ========= Responsive ========= */
-@media (max-width: 480px) {
-  .form-card,
-  .profile-card,
-  .match-card {
-    width: 95%;
+/* ========= COMPREHENSIVE RESPONSIVE DESIGN ========= */
+
+/* Extra Small (320px - 479px) */
+@media (max-width: 479px) {
+  .profile-section {
+    padding: 30px 15px;
+  }
+
+  .section-header-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+  }
+
+  .section-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .item-count {
+    font-size: 0.75rem;
+  }
+
+  .profile-card {
+    width: 100%;
+    padding: 18px;
+    min-height: auto;
+  }
+
+  .profile-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+  }
+
+  .profile-info {
+    font-size: 0.8rem;
+    padding: 8px;
+    margin: 6px 0;
+  }
+
+  .card-img {
+    height: 140px !important;
+    margin-top: 10px;
+  }
+
+  .delete-btn {
+    padding: 10px;
+    font-size: 0.8rem;
+  }
+
+  .match-alert {
+    font-size: 0.75rem;
+    padding: 8px;
+  }
+}
+
+/* Small (480px - 767px) */
+@media (min-width: 480px) and (max-width: 767px) {
+  .profile-section {
+    padding: 40px 20px;
+  }
+
+  .section-header-group {
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+  }
+
+  .items-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .section-subtitle {
+    font-size: 1.3rem;
+  }
+
+  .profile-card {
+    width: 100%;
     padding: 20px;
   }
 
-  .form-card h3 {
-    font-size: 1.5rem;
+  .profile-card h3 {
+    font-size: 1.3rem;
+  }
+
+  .profile-info {
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+
+  .card-img {
+    height: 160px !important;
+  }
+
+  .delete-btn {
+    padding: 10px 12px;
+    font-size: 0.85rem;
   }
 }
+
+/* Medium Tablet (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .profile-section {
+    padding: 50px 25px;
+  }
+
+  .items-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .section-subtitle {
+    font-size: 1.4rem;
+  }
+
+  .profile-card {
+    padding: 25px;
+  }
+
+  .profile-card h3 {
+    font-size: 1.4rem;
+  }
+
+  .card-img {
+    height: 180px !important;
+  }
+}
+
+/* Large Tablet / Desktop (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .profile-section {
+    padding: 60px 30px;
+  }
+
+  .items-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .profile-card {
+    padding: 30px;
+  }
+
+  .card-img {
+    height: 200px !important;
+  }
+}
+
+/* Medium Desktop (1280px - 1535px) */
+@media (min-width: 1280px) and (max-width: 1535px) {
+  .profile-section {
+    padding: 70px 40px;
+  }
+
+  .items-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .profile-card {
+    padding: 35px;
+  }
+
+  .card-img {
+    height: 220px !important;
+  }
+}
+
+/* Large Desktop (1536px+) */
+@media (min-width: 1536px) {
+  .profile-section {
+    padding: 80px 50px;
+  }
+
+  .items-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .profile-card {
+    padding: 40px;
+  }
+
+  .card-img {
+    height: 250px !important;
+  }
+}
+

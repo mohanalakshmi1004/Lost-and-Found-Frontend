@@ -4,25 +4,56 @@ import MatchList from "../components/MatchList";
 
 function Matches() {
   const [lostItems, setLostItems] = useState([]);
-  const [foundItems, setFoundItems] = useState([]);
+  const [foundItems, setFoundItems] = useState([]); // this will hold all found items (global list)
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const lostRes = await axios.get("http://localhost:5000/api/lost");
-      const foundRes = await axios.get("http://localhost:5000/api/found");
+  // ... inside Matches component
+// Matches.js - Logic Fix
+const fetchData = async () => {
+  try {
+    setLoading(true);
+    const token = localStorage.getItem("token");
+    const config = { headers: { Authorization: `Bearer ${token}` } };
 
-      setLostItems(lostRes.data);
-      setFoundItems(foundRes.data);
-    } catch (err) {
-      console.error("Error fetching matches data", err);
-    }
-  };
+    // 1. Fetch YOUR lost items
+    // 2. Fetch ALL found items (Note: You might need a new route /api/found/all 
+    // if your current /api/found is filtered to only show YOUR items)
+    const [lostRes, foundRes] = await Promise.all([
+      axios.get("http://localhost:5000/api/lost", config),
+      axios.get("http://localhost:5000/api/found/all", config), // Suggesting a new route for public feed
+    ]);
 
-  return <MatchList lostItems={lostItems} foundItems={foundItems} />;
+    setLostItems(lostRes.data);
+    setFoundItems(foundRes.data);
+  } catch (err) {
+    console.error("Error fetching matches", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  if (loading)
+    return (
+      <div className="container loading-section">
+        <div className="loader-container">
+          <p>Finding Matches</p>
+          <div className="progress-bar">
+            <div className="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+    );
+
+  return (
+    <div className="container">
+      <h2 className="page-title">Potential Matches</h2>
+      <MatchList lostItems={lostItems} foundItems={foundItems} />
+    </div>
+  );
 }
 
 export default Matches;

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import '../styles/style.css';
 
 function LostForm({ addLostItem }) {
   const [item, setItem] = useState("");
@@ -21,54 +22,59 @@ function LostForm({ addLostItem }) {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!item || !place || !userName || !contact) {
-    alert("Item, Place, Name, and Contact are required!");
-    return;
-  }
-
-const newItem = {
-  item,
-  place,
-  desc,
-  lostDate,
-  contactName: userName,   // changed
-  contactPhone: contact,   // changed
-  userAddress,             // same
-  image,
-};
-
-  try {
-    // 👇 Send to backend
-    const response = await fetch("http://localhost:5000/api/lost", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newItem),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      setSuccessMsg(`"${item}" added successfully!`);
-      setItem("");
-      setPlace("");
-      setDesc("");
-      setLostDate("");
-      setUserName("");
-      setUserAddress("");
-      setContact("");
-      setImage(null);
-      setTimeout(() => setSuccessMsg(""), 3000);
-    } else {
-      alert("Failed to add item: " + data.message);
+    if (!item || !place || !userName || !contact) {
+      alert("Item, Place, Name, and Contact are required!");
+      return;
     }
-  } catch (err) {
-    console.error("Error:", err);
-    alert("Error submitting the form");
-  }
-};
 
+    // 1. Get the token from localStorage
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You must be logged in to report an item!");
+      return;
+    }
+
+    const newItem = {
+      item,
+      place,
+      desc,
+      lostDate,
+      contactName: userName,
+      contactPhone: contact,
+      userAddress,
+      image,
+    };
+
+    try {
+      // 2. Include the Authorization header in the fetch call
+      const response = await fetch("http://localhost:5000/api/lost", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` // THE CRUCIAL FIX
+        },
+        body: JSON.stringify(newItem),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccessMsg(`"${item}" added successfully!`);
+        // Reset form
+        setItem(""); setPlace(""); setDesc(""); setLostDate("");
+        setUserName(""); setUserAddress(""); setContact(""); setImage(null);
+        setTimeout(() => setSuccessMsg(""), 3000);
+      } else {
+        // If 401, the token might be expired
+        alert("Failed to add item: " + (data.message || "Unauthorized access"));
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Error submitting the form");
+    }
+  };
 
   return (
     <div className="form-card">

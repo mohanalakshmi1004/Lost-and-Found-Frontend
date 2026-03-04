@@ -12,20 +12,39 @@ import Layout from "./Layout"; // Layout includes Navbar & Footer
 
 // ✅ PrivateRoute Component (Protected Pages)
 function PrivateRoute({ children }) {
-  const isLoggedIn = localStorage.getItem("isLoggedIn");
-  return isLoggedIn ? children : <Navigate to="/login" replace />;
-}
+  const token = localStorage.getItem("token");
 
+  return token ? children : <Navigate to="/login" replace />;
+}
 function App() {
   const [lostItems, setLostItems] = useState([]);
   const [foundItems, setFoundItems] = useState([]);
 
   useEffect(() => {
-    const lost = JSON.parse(localStorage.getItem("lostItems")) || [];
-    const found = JSON.parse(localStorage.getItem("foundItems")) || [];
-    setLostItems(lost);
-    setFoundItems(found);
-  }, []);
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const lostRes = await fetch("http://localhost:5000/api/lost", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const foundRes = await fetch("http://localhost:5000/api/found", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const lostData = await lostRes.json();
+      const foundData = await foundRes.json();
+
+      setLostItems(lostData);
+      setFoundItems(foundData);
+    } catch (error) {
+      console.error("Error fetching items:", error);
+    }
+  };
+
+  fetchData();
+}, []);
 
   const addLostItem = (item) => {
     const updated = [...lostItems, item];
@@ -77,7 +96,7 @@ function App() {
             path="/matches"
             element={
               <PrivateRoute>
-                <Matches lostItems={lostItems} foundItems={foundItems} />
+                <Matches />
               </PrivateRoute>
             }
           />
