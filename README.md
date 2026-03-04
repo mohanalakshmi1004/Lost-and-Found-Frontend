@@ -13,6 +13,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 > ⚙️ **Environment variables**
 > - Set `REACT_APP_API_URL` in `.env` (e.g. `REACT_APP_API_URL=http://localhost:5000`).
+> - **Do not include a trailing slash** – the code automatically strips it to prevent `//api` URLs.
+> - In production point it to your deployed backend (e.g. `https://lost-and-found-backend-gaiw.onrender.com`).
 > - The app will fall back to `http://localhost:5000` if the variable is missing.
 
 The page will reload when you make changes.\

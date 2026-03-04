@@ -10,7 +10,8 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Layout from "./Layout"; // Layout includes Navbar & Footer
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+// strip any trailing slash so we don't end up with double // when appending paths
+const API_URL = (process.env.REACT_APP_API_URL || "http://localhost:5000").replace(/\/+$/g, "");
 
 // ✅ PrivateRoute Component (Protected Pages)
 function PrivateRoute({ children }) {

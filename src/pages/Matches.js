@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import MatchList from "../components/MatchList";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_URL = (process.env.REACT_APP_API_URL || "http://localhost:5000").replace(/\/+$/g, "");
 
 function Matches() {
   const [lostItems, setLostItems] = useState([]);

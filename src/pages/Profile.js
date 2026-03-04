@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 // base API url from environment
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_URL = (process.env.REACT_APP_API_URL || "http://localhost:5000").replace(/\/+$/g, "");
 
 function Profile() {
   const [lostItems, setLostItems] = useState([]);
