@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 import LandingPage from "./components/LandingPage";
 import Home from "./pages/Home";
 import LostItems from "./pages/LostItems";
 import FoundItems from "./pages/FoundItems";
-import Matches from "./pages/Matches";
+import Matches from "./pages/Match  es";
 import Profile from "./pages/Profile";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Layout from "./Layout"; // Layout includes Navbar & Footer
+
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 // ✅ PrivateRoute Component (Protected Pages)
 function PrivateRoute({ children }) {
