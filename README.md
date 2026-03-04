@@ -9,7 +9,11 @@ In the project directory, you can run:
 ### `npm start`
 
 Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.  
+
+> ⚙️ **Environment variables**
+> - Set `REACT_APP_API_URL` in `.env` (e.g. `REACT_APP_API_URL=http://localhost:5000`).
+> - The app will fall back to `http://localhost:5000` if the variable is missing.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.

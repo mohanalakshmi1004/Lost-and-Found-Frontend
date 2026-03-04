@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+// base API url from environment
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 function Profile() {
   const [lostItems, setLostItems] = useState([]);
   const [myFoundItems, setMyFoundItems] = useState([]); // items the logged-in user has reported
@@ -30,9 +33,9 @@ function Profile() {
       // fetch user's lost items, user's own found items (for display), and
       // all found items so we can match across users
       const [lostRes, myFoundRes, allFoundRes] = await Promise.all([
-        axios.get("http://localhost:5000/api/lost", config),
-        axios.get("http://localhost:5000/api/found", config),
-        axios.get("http://localhost:5000/api/found/all", config),
+        axios.get(`${API_URL}/api/lost`, config),
+        axios.get(`${API_URL}/api/found`, config),
+        axios.get(`${API_URL}/api/found/all`, config),
       ]);
 
       setLostItems(lostRes.data);
@@ -58,7 +61,7 @@ function Profile() {
 
     try {
       setDeletingId(id);
-      await axios.delete(`http://localhost:5000/api/lost/${id}`, {
+      await axios.delete(`${API_URL}/api/lost/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       await fetchData(); 
@@ -76,7 +79,7 @@ function Profile() {
 
     try {
       setDeletingId(id);
-      await axios.delete(`http://localhost:5000/api/found/${id}`, {
+      await axios.delete(`${API_URL}/api/found/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       await fetchData();

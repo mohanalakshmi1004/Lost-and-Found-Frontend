@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 import LandingPage from "./components/LandingPage";
 import Home from "./pages/Home";
 import LostItems from "./pages/LostItems";
@@ -25,11 +27,11 @@ function App() {
     try {
       const token = localStorage.getItem("token");
 
-      const lostRes = await fetch("http://localhost:5000/api/lost", {
+      const lostRes = await fetch(`${API_URL}/api/lost`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const foundRes = await fetch("http://localhost:5000/api/found", {
+      const foundRes = await fetch(`${API_URL}/api/found`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import '../styles/style.css';
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 function FoundForm({ addFoundItem }) {
   const [item, setItem] = useState("");
   const [place, setPlace] = useState("");
@@ -48,7 +50,7 @@ function FoundForm({ addFoundItem }) {
 
     try {
       // 2. Add the Authorization header to the fetch call
-      const response = await fetch("http://localhost:5000/api/found", {
+      const response = await fetch(`${API_URL}/api/found`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

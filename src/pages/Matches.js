@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import MatchList from "../components/MatchList";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 function Matches() {
   const [lostItems, setLostItems] = useState([]);
   const [foundItems, setFoundItems] = useState([]); // this will hold all found items (global list)
@@ -23,8 +25,8 @@ const fetchData = async () => {
     // 2. Fetch ALL found items (Note: You might need a new route /api/found/all 
     // if your current /api/found is filtered to only show YOUR items)
     const [lostRes, foundRes] = await Promise.all([
-      axios.get("http://localhost:5000/api/lost", config),
-      axios.get("http://localhost:5000/api/found/all", config), // Suggesting a new route for public feed
+      axios.get(`${API_URL}/api/lost`, config),
+      axios.get(`${API_URL}/api/found/all`, config), // Suggesting a new route for public feed
     ]);
 
     setLostItems(lostRes.data);
