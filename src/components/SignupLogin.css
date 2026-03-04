@@ -132,6 +132,18 @@
   text-decoration: underline;
 }
 
+/* Error message styling */
+.error-message {
+  color: #dc2626;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
 /* ========= RESPONSIVE DESIGN ========= */
 
 /* Extra Small (320px - 479px) */

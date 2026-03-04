@@ -27,7 +27,6 @@ function Login() {
     });
 
     const result = await response.json();
-    console.log("Login response:", result);
 
     if (!response.ok) {
       setError(result.message);
